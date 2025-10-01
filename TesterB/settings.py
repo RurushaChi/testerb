@@ -10,22 +10,27 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+# This is from https://neon.com/docs/guides/django Add these at the top of your settings.py
+from os import getenv
+from dotenv import load_dotenv
+import os
 from pathlib import Path
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+load_dotenv(BASE_DIR / '.env')  # Explicitly load from project root
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-4z--h$oz01nq39k+9or6a91kbyh#-^ffcx!+l2y(-__m^*c8_m'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -74,10 +79,18 @@ WSGI_APPLICATION = 'TesterB.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# Replace the DATABASES section of your settings.py with this
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('NEON_DATABASE_NAME'),
+        'USER': os.environ.get('NEON_USERNAME'),
+        'PASSWORD': os.environ.get('NEON_PASSWORD'),
+        'HOST': os.environ.get('NEON_HOST'),
+        'PORT': os.environ.get('NEON_PORT'),
+        "OPTIONS": {
+            'sslmode': 'require',  # Important for Neon
+        }
     }
 }
 
